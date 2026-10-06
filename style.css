@@ -34,6 +34,9 @@ main{padding:24px 0 60px}
 .badge.ok{background:rgba(93,211,158,.12);color:var(--ok);border:1px solid rgba(93,211,158,.3)}
 .tr-body{display:none;border-top:1px solid var(--line);padding:12px 14px;background:var(--card2)}
 .tracks li.open .tr-body{display:block}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.tr-body a{color:#bcd3ff}
 .tr-body h4{margin:2px 0 8px;font-size:13px;color:var(--muted);font-weight:600}
 .tr-body ul{margin:0;padding-left:18px}
 .tr-body li{background:none;border:none;border-radius:0;padding:1px 0;color:#cdd6e2;font-size:14px}

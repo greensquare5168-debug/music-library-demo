@@ -29,7 +29,7 @@
     list.innerHTML = '';
     let shown = 0;
     d.tracks.forEach((t,i)=>{
-      const hay = (t.title+' '+t.composer+' '+t.pages.join(' ')).toLowerCase();
+      const hay = (t.title+' '+t.composer+' '+t.pages.map(p=>p.name).join(' ')).toLowerCase();
       if (q && !hay.includes(q)) return;
       if (state.f==='used' && !t.pages.length) return;
       if (state.f==='change' && !t.change) return;
@@ -42,13 +42,13 @@
       li.innerHTML = `
         <div class="tr-head">
           <span class="tr-no">#${i+1}</span>
-          <span class="tr-title">${t.title}${badge}</span>
+          <span class="tr-title">${t.lib?`<a href="${t.lib}" target="_blank" rel="noopener">${t.title}</a>`:t.title}${badge}</span>
           <span class="tr-comp">${t.composer}</span>
         </div>
         <div class="tr-body">
           ${t.change?`<div class="change">站上：<b>${t.change.site}</b> → 應改：<b>${t.change.target}</b></div>`:''}
           <h4>使用頁面（${t.pages.length}）</h4>
-          ${t.pages.length?`<ul>${t.pages.map(p=>`<li>${p}</li>`).join('')}</ul>`
+          ${t.pages.length?`<ul>${t.pages.map(p=>`<li>${p.url?`<a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>`:p.name}</li>`).join('')}</ul>`
                            :`<div class="muted">站上尚未發現使用</div>`}
         </div>`;
       li.querySelector('.tr-head').onclick = ()=> li.classList.toggle('open');
