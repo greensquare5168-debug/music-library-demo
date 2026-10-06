@@ -178,7 +178,9 @@
     const box=document.getElementById('view-page'); box.hidden=false;
     box.innerHTML=`<div class="crumb"><a id="pback">← 回上一頁</a> / ${name}</div>
       <div class="album-card"><h1 style="font-size:20px;margin:0 0 4px">${name}</h1>
-        <div class="muted">本頁使用的音樂（${n}）· 依站上單元順序</div></div>`+
+        <div class="muted">本頁使用的音樂（${n}）· 依站上單元順序</div>${info.yt&&info.yt.yt_links?`
+        <div class="ytlinks">🎬 影片：${info.yt.yt_links.slice(0,1).map(u=>`<a href="${u}" target="_blank" rel="noopener">在 YouTube 開啟 ↗</a>`).join('')}</div>`:''}</div>`+
+      (info.yt&&info.yt.embed?`<div class="album-card"><div class="ytframe"><iframe src="${info.yt.embed}" title="YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div><div class="muted" style="margin-top:6px">（YouTube 影片視窗，對應原站嵌入）</div></div>`:'')+
       info.sections.map(sec=>`<div class="album-card">
         <div class="unit">${sec.s?sec.s:'（其他）'}</div>
         <ul class="proglist">${sec.items.map(itemHTML).join('')}</ul></div>`).join('')+
