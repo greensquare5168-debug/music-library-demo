@@ -124,11 +124,13 @@
         return `<div class="album-card"><ul class="brandlist"><li data-c="${k}" class="${dis}"><span class="bname">🏢 ${coName(k)}</span><span class="muted">${nprog} 個節目 · ${npg} 頁</span><span class="go">›</span></li></ul></div>`;}).join('');
     comp.querySelectorAll('[data-c]').forEach(li=>li.onclick=()=>coProgs(li.dataset.c));
   }
+  const po=target.programOrder||{};
   function coProgs(k){
     const progs=coIndex[k];
+    const ord=Object.keys(progs).sort((a,b)=>((po[a]??1e9)-(po[b]??1e9))||a.localeCompare(b));
     comp.innerHTML=`<div class="crumb"><a data-back>← 使用公司</a> / ${coName(k)}</div>`+
-      `<div class="album-card">`+(Object.keys(progs).length?
-      `<ul class="albumlist">`+Object.keys(progs).sort().map(pr=>`<li data-p="${pr}"><span class="aname">📺 ${pr}</span><span class="muted">${cnt(progs[pr])} 頁</span><span class="go">›</span></li>`).join('')+`</ul>`
+      `<div class="album-card">`+(ord.length?
+      `<ul class="albumlist">`+ord.map(pr=>`<li data-p="${pr}"><span class="aname">📺 ${pr}</span><span class="muted">${cnt(progs[pr])} 頁</span><span class="go">›</span></li>`).join('')+`</ul>`
       :`<div class="muted">（這張專輯在此公司沒有使用紀錄）</div>`)+`</div>`;
     comp.querySelector('[data-back]').onclick=coList;
     comp.querySelectorAll('[data-p]').forEach(li=>li.onclick=()=>coSeasons(k,li.dataset.p));
