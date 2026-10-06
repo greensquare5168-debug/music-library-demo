@@ -3,36 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>罐頭音樂研究所 · CAR 156</title>
+<title>罐頭音樂研究所 · Demo</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="site-head">
-  <div class="wrap">
-    <div class="brand">🎼 罐頭音樂研究所 <span class="tag">Demo</span></div>
-    <div class="sub">資料驅動的專輯頁（由整理資料自動生成）</div>
+  <div class="wrap head-row">
+    <div>
+      <div class="brand">🎼 罐頭音樂研究所 <span class="tag">Demo</span></div>
+      <div class="sub">資料驅動（由整理資料自動生成）</div>
+    </div>
+    <nav class="topnav">
+      <button data-v="lib" class="on">📚 音樂圖書館</button>
+      <button data-v="comp">🏢 使用公司</button>
+    </nav>
   </div>
 </header>
 
 <main class="wrap">
-  <section class="album-card" id="album"></section>
-
-  <div class="toolbar">
-    <input id="q" type="search" placeholder="搜尋曲名 / 作曲者 / 使用節目…">
-    <div class="filters">
-      <button data-f="all" class="on">全部</button>
-      <button data-f="used">有使用</button>
-      <button data-f="change">需改作者</button>
+  <section id="view-lib">
+    <div class="album-card" id="album"></div>
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="搜尋曲名 / 作曲者 / 使用節目…">
+      <div class="filters">
+        <button data-f="all" class="on">全部</button>
+        <button data-f="used">有使用</button>
+        <button data-f="change">需改作者</button>
+      </div>
     </div>
-  </div>
+    <div class="stats" id="stats"></div>
+    <ul class="tracks" id="tracks"></ul>
+    <section class="excluded">
+      <h2>已排除（類型含 Links / 音效）</h2>
+      <p class="muted" id="excl-note"></p>
+      <ul id="excluded"></ul>
+    </section>
+  </section>
 
-  <div class="stats" id="stats"></div>
-  <ul class="tracks" id="tracks"></ul>
-
-  <section class="excluded">
-    <h2>已排除（類型含 Links / 音效）</h2>
-    <p class="muted" id="excl-note"></p>
-    <ul id="excluded"></ul>
+  <section id="view-comp" hidden>
+    <div class="album-card">
+      <h2 style="margin:0 0 4px">🏢 使用公司</h2>
+      <div class="muted">這張專輯的曲目被哪些公司／節目的哪些頁面用過（點頁面可連到站上該頁）</div>
+    </div>
+    <div id="companies"></div>
   </section>
 </main>
 

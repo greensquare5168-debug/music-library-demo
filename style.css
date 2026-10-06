@@ -8,6 +8,14 @@ body{margin:0;background:var(--bg);color:var(--fg);
 .wrap{max-width:960px;margin:0 auto;padding:0 20px}
 .site-head{background:linear-gradient(180deg,#1a1f29,#12161d);border-bottom:1px solid var(--line);padding:22px 0}
 .brand{font-size:22px;font-weight:700;letter-spacing:.5px}
+.head-row{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.topnav{display:flex;gap:8px}
+.topnav button{background:var(--card);border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:9px 16px;font-size:14px;cursor:pointer}
+.topnav button.on{background:var(--accent);color:#0b1020;border-color:var(--accent);font-weight:700}
+.linkpill{text-decoration:none}
+.co{display:inline-block;background:rgba(110,168,254,.12);color:#9cc2ff;border:1px solid rgba(110,168,254,.3);border-radius:6px;font-size:11px;padding:0 6px;margin-right:6px}
+.proglist{list-style:none;margin:0;padding:0}
+.proglist li{padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px}
 .tag{font-size:12px;background:var(--accent);color:#0b1020;border-radius:6px;padding:2px 8px;vertical-align:middle;margin-left:6px}
 .sub{color:var(--muted);font-size:13px;margin-top:4px}
 main{padding:24px 0 60px}
