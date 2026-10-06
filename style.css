@@ -18,6 +18,7 @@ body{margin:0;background:var(--bg);color:var(--fg);
 .proglist li{padding:9px 0;border-bottom:1px dashed var(--line);font-size:14.5px;line-height:1.7}
 .proglist li:last-child{border-bottom:none}
 .proglist .tk{margin-right:10px}
+.proglist .role{color:#8fa7c9;font-size:13px;border:1px dashed rgba(143,167,201,.5);border-radius:6px;padding:0 6px;margin-right:8px;white-space:nowrap}
 .proglist .cp{color:var(--muted);font-size:13.5px}
 .proglist .src{margin-left:10px;font-size:12px;color:#9cc2ff;border:1px solid rgba(110,168,254,.35);border-radius:6px;padding:1px 7px;white-space:nowrap}
 .unit{font-weight:700;color:#cfd9e8;font-size:14.5px;padding:2px 0 8px;border-bottom:2px solid var(--line);margin-bottom:2px}

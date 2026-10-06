@@ -161,7 +161,16 @@
     comp.querySelectorAll('[data-page]').forEach(a=>a.onclick=e=>{e.preventDefault();openPage(decodeURIComponent(a.dataset.page));});
   }
   // ── 站上頁面（在 GitHub 上重生） ──
-  const ROLE=/^(標題|片頭曲|片尾曲|簡介|進廣告|插曲|主題曲|配樂|片頭|片尾|開頭|結尾|前奏|尾奏|BGM|回來|過場)(\s|$)/;
+  const ROLE=/^(標題|片頭曲|片尾曲|簡介|進廣告|插曲|主題曲|配樂|片頭|片尾|開頭|結尾|前奏|尾奏|BGM|回來|過場)\s*/;
+  function itemHTML(x){
+    const m=x.t.match(ROLE);
+    const role=m?m[1]:'';
+    const rest=m?x.t.slice(m[0].length).trim():x.t;
+    const linked = x.u && rest && rest!=='？';
+    const name = linked?`<a href="${x.u}" target="_blank" rel="noopener">${rest}</a>`:rest;
+    const chip = linked?`<a class="src" href="${x.u}" target="_blank" rel="noopener">${srcLabel(x.u)} ↗</a>`:'';
+    return `<li>${role?`<span class="role">${role}</span>`:''}<span class="tk">${name}</span>${x.c?`<span class="cp">${x.c}</span>`:''}${chip}</li>`;
+  }
   function openPage(name){
     const info=(target.pagesInfo||{})['知識平台網 - '+name]||{sections:[]};
     const n=info.sections.reduce((s,x)=>s+x.items.length,0);
@@ -172,7 +181,7 @@
         <div class="muted">本頁使用的音樂（${n}）· 依站上單元順序</div></div>`+
       info.sections.map(sec=>`<div class="album-card">
         <div class="unit">${sec.s?sec.s:'（其他）'}</div>
-        <ul class="proglist">${sec.items.map(x=>`<li><span class="tk">${(x.u&&!ROLE.test(x.t))?`<a href="${x.u}" target="_blank" rel="noopener">${x.t}</a>`:x.t}</span>${x.c?`<span class="cp">${x.c}</span>`:''}${(x.u&&!ROLE.test(x.t))?`<a class="src" href="${x.u}" target="_blank" rel="noopener">${srcLabel(x.u)} ↗</a>`:''}</li>`).join('')}</ul></div>`).join('')+
+        <ul class="proglist">${sec.items.map(itemHTML).join('')}</ul></div>`).join('')+
       `<div class="muted" style="margin-top:10px">↳ 這一頁原本在 Google Sites，現在已在 GitHub 上原生顯示（不再外連）。</div>`;
     document.getElementById('pback').onclick=()=>{box.hidden=true;showView(curTop);};
     window.scrollTo(0,0);
