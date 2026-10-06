@@ -171,12 +171,13 @@
         <div class="muted">本頁使用的音樂（${n}）· 依站上單元順序</div></div>`+
       info.sections.map(sec=>`<div class="album-card">
         <div class="unit">${sec.s?sec.s:'（其他）'}</div>
-        <ul class="proglist">${sec.items.map(x=>`<li>${x.u?`<a href="${x.u}" target="_blank" rel="noopener">${x.t}</a>`:x.t}<span class="muted">${x.c?' — '+x.c:''}</span></li>`).join('')}</ul></div>`).join('')+
+        <ul class="proglist">${sec.items.map(x=>`<li><span class="tk">${x.u?`<a href="${x.u}" target="_blank" rel="noopener">${x.t}</a>`:x.t}</span>${x.c?`<span class="cp">${x.c}</span>`:''}${x.u?`<a class="src" href="${x.u}" target="_blank" rel="noopener">${srcLabel(x.u)} ↗</a>`:''}</li>`).join('')}</ul></div>`).join('')+
       `<div class="muted" style="margin-top:10px">↳ 這一頁原本在 Google Sites，現在已在 GitHub 上原生顯示（不再外連）。</div>`;
     document.getElementById('pback').onclick=()=>{box.hidden=true;showView(curTop);};
     window.scrollTo(0,0);
   }
   let curTop='lib';
+  const srcLabel=u=>/youtube|youtu\.be/.test(u)?'YouTube':/warnerchappellpm/.test(u)?'WCPM':/universalproductionmusic/.test(u)?'UPM':/pointmusic/.test(u)?'音韶':'連結';
   coList();
 
   renderLabels();
