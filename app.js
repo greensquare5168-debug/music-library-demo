@@ -178,7 +178,7 @@
         <div class="ytlinks">🎬 影片：${info.yt.yt_links.slice(0,1).map(u=>`<a href="${u}" target="_blank" rel="noopener">在 YouTube 開啟 ↗</a>`).join('')}</div>`:''}</div>`+
       (info.yt&&info.yt.embed?`<div class="album-card"><div class="ytframe"><iframe src="${info.yt.embed}" title="YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div><div class="muted" style="margin-top:6px">（YouTube 影片視窗，對應原站嵌入）</div></div>`:'')+
       info.sections.map(sec=>`<div class="album-card">
-        <div class="unit">${sec.s?sec.s:'（其他）'}</div>
+        ${sec.s?`<div class="unit">${sec.s}</div>`:''}
         <ul class="proglist">${sec.items.map(itemHTML).join('')}</ul></div>`).join('')+
       `<div class="muted" style="margin-top:10px">↳ 這一頁原本在 Google Sites，現在已在 GitHub 上原生顯示（不再外連）。</div>`;
     document.getElementById('pback').onclick=()=>{box.hidden=true;showView(curTop);};
