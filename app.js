@@ -162,15 +162,17 @@
   }
   // ── 站上頁面（在 GitHub 上重生） ──
   function openPage(name){
-    const info=(target.pagesInfo||{})['知識平台網 - '+name]||{tracks:[]};
+    const info=(target.pagesInfo||{})['知識平台網 - '+name]||{sections:[]};
+    const n=info.sections.reduce((s,x)=>s+x.items.length,0);
     ['view-lib','view-comp','view-page'].forEach(id=>document.getElementById(id).hidden=true);
     const box=document.getElementById('view-page'); box.hidden=false;
     box.innerHTML=`<div class="crumb"><a id="pback">← 回上一頁</a> / ${name}</div>
       <div class="album-card"><h1 style="font-size:20px;margin:0 0 4px">${name}</h1>
-        <div class="muted">本頁使用的音樂（${info.tracks.length}）</div></div>
-      <div class="album-card"><ul class="proglist">${info.tracks.map(x=>
-        `<li>${x.u?`<a href="${x.u}" target="_blank" rel="noopener">${x.t}</a>`:x.t}<span class="muted">${x.c?' — '+x.c:''}</span></li>`).join('')}</ul></div>
-      <div class="muted" style="margin-top:10px">↳ 這一頁原本在 Google Sites，現在已在 GitHub 上原生顯示（不再外連）。</div>`;
+        <div class="muted">本頁使用的音樂（${n}）· 依站上單元順序</div></div>`+
+      info.sections.map(sec=>`<div class="album-card">
+        <div class="unit">${sec.s?sec.s:'（其他）'}</div>
+        <ul class="proglist">${sec.items.map(x=>`<li>${x.u?`<a href="${x.u}" target="_blank" rel="noopener">${x.t}</a>`:x.t}<span class="muted">${x.c?' — '+x.c:''}</span></li>`).join('')}</ul></div>`).join('')+
+      `<div class="muted" style="margin-top:10px">↳ 這一頁原本在 Google Sites，現在已在 GitHub 上原生顯示（不再外連）。</div>`;
     document.getElementById('pback').onclick=()=>{box.hidden=true;showView(curTop);};
     window.scrollTo(0,0);
   }
