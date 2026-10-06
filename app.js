@@ -45,7 +45,6 @@
         <div class="filters">
           <button data-f="all" class="on">全部</button>
           <button data-f="used">有使用</button>
-          <button data-f="change">需改作者</button>
         </div>
       </div>
       <div class="stats" id="stats"></div>
@@ -68,7 +67,7 @@
   // ── 專輯內：曲目清單 ──
   function buildTracks(a){
     const list=document.getElementById('tracks');
-    const usedN=a.tracks.filter(t=>t.pages.length).length, chgN=a.tracks.filter(t=>t.change).length;
+    const usedN=a.tracks.filter(t=>t.pages.length).length;
     const state={q:'',f:'all'};
     function render(){
       const q=state.q.trim().toLowerCase(); list.innerHTML=''; let shown=0;
@@ -76,17 +75,14 @@
         const hay=(t.title+' '+t.composer+' '+t.pages.map(p=>p.name).join(' ')).toLowerCase();
         if(q&&!hay.includes(q))return;
         if(state.f==='used'&&!t.pages.length)return;
-        if(state.f==='change'&&!t.change)return;
         shown++;
-        const badge=t.change?`<span class="badge warn">需改作者</span>`
-                            :(t.pages.length?`<span class="badge ok">${t.pages.length} 頁</span>`:'');
+        const badge=t.pages.length?`<span class="badge ok">${t.pages.length} 頁</span>`:'';
         const li=document.createElement('li');
         li.innerHTML=`
           <div class="tr-head"><span class="tr-no">#${i+1}</span>
             <span class="tr-title">${t.lib?`<a href="${t.lib}" target="_blank" rel="noopener">${t.title}</a>`:t.title}${badge}</span>
             <span class="tr-comp">${t.composer}</span></div>
           <div class="tr-body">
-            ${t.change?`<div class="change">站上：<b>${t.change.site}</b> → 應改：<b>${t.change.target}</b></div>`:''}
             <h4>使用頁面（${t.pages.length}）</h4>
             ${t.pages.length?`<ul>${t.pages.map(p=>`<li>${p.company?`<span class="co">${coName(p.company)}</span>`:''}<a data-page="${encodeURIComponent(p.name)}" href="#page=${encodeURIComponent(p.name)}">${p.name}</a></li>`).join('')}</ul>`
                              :`<div class="muted">站上尚未發現使用</div>`}
@@ -96,7 +92,7 @@
         list.appendChild(li);
       });
       document.getElementById('stats').textContent=
-        `顯示 ${shown} / ${a.tracks.length} 首　·　有使用 ${usedN} 首　·　需改作者 ${chgN} 首`;
+        `顯示 ${shown} / ${a.tracks.length} 首　·　有使用 ${usedN} 首`;
     }
     document.getElementById('q').addEventListener('input',e=>{state.q=e.target.value;render();});
     document.querySelectorAll('.filters button').forEach(b=> b.onclick=()=>{
