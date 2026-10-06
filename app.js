@@ -109,7 +109,7 @@
   const coIndex={};
   target.tracks.forEach(t=>t.pages.forEach(p=>{
     const k=p.company||'（未分類）'; coIndex[k]=coIndex[k]||{};
-    const pr=p.program||'（其他）'; coIndex[k][pr]=coIndex[k][pr]||{};
+    const pr=p.program_label||p.program||'（其他）'; coIndex[k][pr]=coIndex[k][pr]||{};
     coIndex[k][pr][p.name]=coIndex[k][pr][p.name]||{url:p.url,tracks:new Set()};
     coIndex[k][pr][p.name].tracks.add(t.title);
   }));
