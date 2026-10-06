@@ -102,41 +102,60 @@
     render();
   }
 
-  // ── 使用公司：公司 → 節目 → 季集 ──
+  // ── 使用公司：公司 → 節目 → （季）→ 集 ──
   const target = d.labels.flatMap(L=>L.albums)[0];
   const comp=document.getElementById('companies');
   const order=['yoyotv','momo親子台','巧連智','公視','古古食'];
   const coIndex={};
+  order.forEach(k=>coIndex[k]={});
+  const seasonOf = n => {const m=(n||'').match(/第\s*(\d+)\s*季/); return m?+m[1]:null;};
   target.tracks.forEach(t=>t.pages.forEach(p=>{
     const k=p.company||'（未分類）'; coIndex[k]=coIndex[k]||{};
     const pr=p.program_label||p.program||'（其他）'; coIndex[k][pr]=coIndex[k][pr]||{};
-    coIndex[k][pr][p.name]=coIndex[k][pr][p.name]||{url:p.url,tracks:new Set()};
-    coIndex[k][pr][p.name].tracks.add(t.title);
+    const sk=seasonOf(p.name); const s=(sk===null?'_':String(sk));
+    coIndex[k][pr][s]=coIndex[k][pr][s]||{};
+    coIndex[k][pr][s][p.name]=coIndex[k][pr][s][p.name]||{url:p.url,tracks:new Set()};
+    coIndex[k][pr][s][p.name].tracks.add(t.title);
   }));
+  const cnt=e=>Object.values(e).reduce((s,o)=>s+Object.keys(o).length,0);
   function coList(){
     comp.innerHTML=`<div class="crumb">使用公司</div>`+
-      Object.keys(coIndex).sort((x,y)=>(order.indexOf(x)<0?99:order.indexOf(x))-(order.indexOf(y)<0?99:order.indexOf(y)))
-      .map(k=>{const nprog=Object.keys(coIndex[k]).length, npg=Object.values(coIndex[k]).reduce((s,o)=>s+Object.keys(o).length,0);
-        return `<div class="album-card"><ul class="brandlist"><li data-c="${k}"><span class="bname">🏢 ${coName(k)}</span><span class="muted">${nprog} 個節目 · ${npg} 頁</span><span class="go">›</span></li></ul></div>`;}).join('');
+      order.map(k=>{const nprog=Object.keys(coIndex[k]).length, npg=cnt(coIndex[k]);
+        const dis=npg?'':'zero';
+        return `<div class="album-card"><ul class="brandlist"><li data-c="${k}" class="${dis}"><span class="bname">🏢 ${coName(k)}</span><span class="muted">${nprog} 個節目 · ${npg} 頁</span><span class="go">›</span></li></ul></div>`;}).join('');
     comp.querySelectorAll('[data-c]').forEach(li=>li.onclick=()=>coProgs(li.dataset.c));
   }
   function coProgs(k){
     const progs=coIndex[k];
     comp.innerHTML=`<div class="crumb"><a data-back>← 使用公司</a> / ${coName(k)}</div>`+
-      `<div class="album-card"><ul class="albumlist">`+
-      Object.keys(progs).sort().map(pr=>`<li data-p="${pr}"><span class="aname">📺 ${pr}</span><span class="muted">${Object.keys(progs[pr]).length} 頁</span><span class="go">›</span></li>`).join('')+
-      `</ul></div>`;
+      `<div class="album-card">`+(Object.keys(progs).length?
+      `<ul class="albumlist">`+Object.keys(progs).sort().map(pr=>`<li data-p="${pr}"><span class="aname">📺 ${pr}</span><span class="muted">${cnt(progs[pr])} 頁</span><span class="go">›</span></li>`).join('')+`</ul>`
+      :`<div class="muted">（這張專輯在此公司沒有使用紀錄）</div>`)+`</div>`;
     comp.querySelector('[data-back]').onclick=coList;
-    comp.querySelectorAll('[data-p]').forEach(li=>li.onclick=()=>coPages(k,li.dataset.p));
+    comp.querySelectorAll('[data-p]').forEach(li=>li.onclick=()=>coSeasons(k,li.dataset.p));
   }
-  function coPages(k,pr){
-    const pages=coIndex[k][pr];
+  function coSeasons(k,pr){
+    const seasons=coIndex[k][pr];
+    const keys=Object.keys(seasons);
+    const hasSeason = keys.some(x=>x!=='_');
+    if(!hasSeason){ coPages(k,pr,'_'); return; }
+    keys.sort((a,b)=>(a==='_'?1e9:+a)-(b==='_'?1e9:+b));
     comp.innerHTML=`<div class="crumb"><a data-back>← ${coName(k)}</a> / ${pr}</div>`+
-      `<div class="album-card"><ul class="proglist">`+
-      Object.keys(pages).sort().map(n=>{const e=pages[n];
-        return `<li>${e.url?`<a href="${e.url}" target="_blank" rel="noopener">${n}</a>`:n}<span class="muted">— ${[...e.tracks].join('、')}</span></li>`;}).join('')+
+      `<div class="album-card"><ul class="albumlist">`+
+      keys.map(s=>`<li data-s="${s}"><span class="aname">${s==='_'?'（未分季）':'第 '+String(+s).padStart(2,'0')+' 季'}</span><span class="muted">${Object.keys(seasons[s]).length} 頁</span><span class="go">›</span></li>`).join('')+
       `</ul></div>`;
     comp.querySelector('[data-back]').onclick=()=>coProgs(k);
+    comp.querySelectorAll('[data-s]').forEach(li=>li.onclick=()=>coPages(k,pr,li.dataset.s));
+  }
+  function coPages(k,pr,s){
+    const pages=coIndex[k][pr][s];
+    const label = s==='_'? pr : pr+' · 第 '+String(+s).padStart(2,'0')+' 季';
+    comp.innerHTML=`<div class="crumb"><a data-back>← ${pr}</a> / ${label}</div>`+
+      `<div class="album-card"><ul class="proglist">`+
+      Object.keys(pages).sort().map(n=>{const e=pages[n];
+        return `<li>${e.url?`<a href="${e.url}" target="_blank" rel="noopener">${n}</a>`:n}</li>`;}).join('')+
+      `</ul></div>`;
+    comp.querySelector('[data-back]').onclick=()=>coSeasons(k,pr);
   }
   coList();
 
@@ -147,5 +166,6 @@
   else if(/^#album=\d+-\d+/.test(h)){const m=h.split('=')[1].split('-');showView('lib');renderAlbum(+m[0],+m[1]);}
   else if(h==='#companies') showView('comp');
   else if(/^#co=/.test(h)){showView('comp');coProgs(decodeURIComponent(h.slice(4)));}
-  else if(/^#cop=/.test(h)){const a=h.slice(5).split('|');showView('comp');coPages(decodeURIComponent(a[0]),decodeURIComponent(a[1]||''));}
+  else if(/^#cos=/.test(h)){const a=h.slice(5).split('|');showView('comp');coSeasons(decodeURIComponent(a[0]),decodeURIComponent(a[1]||''));}
+  else if(/^#cop=/.test(h)){const a=h.slice(5).split('|');showView('comp');coPages(decodeURIComponent(a[0]),decodeURIComponent(a[1]||''),a[2]||'_');}
 })();

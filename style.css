@@ -25,6 +25,8 @@ body{margin:0;background:var(--bg);color:var(--fg);
 .bname,.aname{font-weight:600;flex:0 0 auto}
 .brandlist .muted,.albumlist .muted{flex:1}
 .go{color:var(--muted);font-size:20px}
+.brandlist li.zero{opacity:.45}
+.brandlist li.zero .go{visibility:hidden}
 .tag{font-size:12px;background:var(--accent);color:#0b1020;border-radius:6px;padding:2px 8px;vertical-align:middle;margin-left:6px}
 .sub{color:var(--muted);font-size:13px;margin-top:4px}
 main{padding:24px 0 60px}
