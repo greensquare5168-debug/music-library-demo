@@ -6,9 +6,11 @@
 
   // ── 頂層：音樂圖書館 / 使用公司 ──
   function showView(v){
+    curTop=(v==='comp')?'comp':'lib';
     document.querySelectorAll('.topnav button').forEach(x=>x.classList.toggle('on', x.dataset.v===v));
     document.getElementById('view-lib').hidden = v!=='lib';
     document.getElementById('view-comp').hidden = v!=='comp';
+    document.getElementById('view-page').hidden = true;
   }
   document.querySelectorAll('.topnav button').forEach(b=> b.onclick=()=>showView(b.dataset.v));
 
@@ -86,10 +88,11 @@
           <div class="tr-body">
             ${t.change?`<div class="change">站上：<b>${t.change.site}</b> → 應改：<b>${t.change.target}</b></div>`:''}
             <h4>使用頁面（${t.pages.length}）</h4>
-            ${t.pages.length?`<ul>${t.pages.map(p=>`<li>${p.company?`<span class="co">${coName(p.company)}</span>`:''}${p.url?`<a href="${p.url}" target="_blank" rel="noopener">${p.name}</a>`:p.name}</li>`).join('')}</ul>`
+            ${t.pages.length?`<ul>${t.pages.map(p=>`<li>${p.company?`<span class="co">${coName(p.company)}</span>`:''}<a data-page="${encodeURIComponent(p.name)}" href="#page=${encodeURIComponent(p.name)}">${p.name}</a></li>`).join('')}</ul>`
                              :`<div class="muted">站上尚未發現使用</div>`}
           </div>`;
         li.querySelector('.tr-head').onclick=()=>li.classList.toggle('open');
+      li.querySelectorAll('[data-page]').forEach(a=>a.onclick=e=>{e.preventDefault();e.stopPropagation();openPage(decodeURIComponent(a.dataset.page));});
         list.appendChild(li);
       });
       document.getElementById('stats').textContent=
@@ -105,7 +108,7 @@
   // ── 使用公司：公司 → 節目 → （季）→ 集 ──
   const target = d.labels.flatMap(L=>L.albums)[0];
   const comp=document.getElementById('companies');
-  const order=['yoyotv','momo親子台','巧連智','公視','古古食'];
+  const order=['公視','yoyotv','momo親子台','巧連智','古古食'];
   const coIndex={};
   order.forEach(k=>coIndex[k]={});
   const seasonOf = n => {const m=(n||'').match(/第\s*(\d+)\s*季/); return m?+m[1]:null;};
@@ -152,16 +155,32 @@
     const label = s==='_'? pr : pr+' · 第 '+String(+s).padStart(2,'0')+' 季';
     comp.innerHTML=`<div class="crumb"><a data-back>← ${pr}</a> / ${label}</div>`+
       `<div class="album-card"><ul class="proglist">`+
-      Object.keys(pages).sort().map(n=>{const e=pages[n];
-        return `<li>${e.url?`<a href="${e.url}" target="_blank" rel="noopener">${n}</a>`:n}</li>`;}).join('')+
+      Object.keys(pages).sort().map(n=>`<li><a data-page="${encodeURIComponent(n)}" href="#page=${encodeURIComponent(n)}">${n}</a></li>`).join('')+
       `</ul></div>`;
     comp.querySelector('[data-back]').onclick=()=>coSeasons(k,pr);
+    comp.querySelectorAll('[data-page]').forEach(a=>a.onclick=e=>{e.preventDefault();openPage(decodeURIComponent(a.dataset.page));});
   }
+  // ── 站上頁面（在 GitHub 上重生） ──
+  function openPage(name){
+    const info=(target.pagesInfo||{})['知識平台網 - '+name]||{tracks:[]};
+    ['view-lib','view-comp','view-page'].forEach(id=>document.getElementById(id).hidden=true);
+    const box=document.getElementById('view-page'); box.hidden=false;
+    box.innerHTML=`<div class="crumb"><a id="pback">← 回上一頁</a> / ${name}</div>
+      <div class="album-card"><h1 style="font-size:20px;margin:0 0 4px">${name}</h1>
+        <div class="muted">本頁使用的音樂（${info.tracks.length}）</div></div>
+      <div class="album-card"><ul class="proglist">${info.tracks.map(x=>
+        `<li>${x.u?`<a href="${x.u}" target="_blank" rel="noopener">${x.t}</a>`:x.t}<span class="muted">${x.c?' — '+x.c:''}</span></li>`).join('')}</ul></div>
+      <div class="muted" style="margin-top:10px">↳ 這一頁原本在 Google Sites，現在已在 GitHub 上原生顯示（不再外連）。</div>`;
+    document.getElementById('pback').onclick=()=>{box.hidden=true;showView(curTop);};
+    window.scrollTo(0,0);
+  }
+  let curTop='lib';
   coList();
 
   renderLabels();
   const h=location.hash||'';
   if(h==='#companies') showView('comp');
+  else if(/^#page=/.test(h)){openPage(decodeURIComponent(h.slice(6)));}
   else if(/^#label=\d+/.test(h)) renderAlbums(+h.split('=')[1]);
   else if(/^#album=\d+-\d+/.test(h)){const m=h.split('=')[1].split('-');showView('lib');renderAlbum(+m[0],+m[1]);}
   else if(h==='#companies') showView('comp');
